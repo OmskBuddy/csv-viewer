@@ -1,7 +1,7 @@
 <template>
   <Card class="shadow-md">
     <template #content>
-      <div v-if="loading && rows.length === 0" class="text-center py-8">
+      <div v-if="internalLoading && rows.length === 0" class="text-center py-8">
         <ProgressBar mode="indeterminate" class="mb-4" />
         <p class="text-gray-600">Загрузка данных...</p>
       </div>
@@ -61,95 +61,85 @@
   </Card>
 </template>
 
-<script>
+<script setup>
 import { ref, watch, onMounted } from 'vue';
 import { csvService } from '../services/api';
 
-export default {
-  name: 'DataTableViewComponent',
-  props: {
-    fileId: {
-      type: String,
-      required: true
-    },
-    headers: {
-      type: Array,
-      required: true
-    },
-    searchQuery: {
-      type: String,
-      default: null
-    },
-    loading: {
-      type: Boolean,
-      default: false
-    }
+const props = defineProps({
+  fileId: {
+    type: String,
+    required: true
   },
-  emits: ['loading-change'],
-  setup(props, { emit }) {
-    const rows = ref([]);
-    const pagination = ref(null);
-    const currentPage = ref(1);
-    const pageSize = ref(50);
-    const internalLoading = ref(false);
+  headers: {
+    type: Array,
+    required: true
+  },
+  searchQuery: {
+    type: String,
+    default: null
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  }
+});
 
-    const loadData = async (page = 1) => {
-      if (!props.fileId) return;
+const emit = defineEmits(['loading-change']);
 
-      internalLoading.value = true;
-      emit('loading-change', true);
+const rows = ref([]);
+const pagination = ref(null);
+const currentPage = ref(1);
+const pageSize = ref(50);
+const internalLoading = ref(false);
 
-      try {
-        const response = await csvService.getRows(
-          props.fileId,
-          page,
-          pageSize.value,
-          props.searchQuery
-        );
+const loadData = async (page = 1) => {
+  if (!props.fileId) return;
 
-        rows.value = response.rows;
-        pagination.value = response.pagination;
-        currentPage.value = page;
-      } catch (error) {
-        console.error('Error loading data:', error);
-        rows.value = [];
-        pagination.value = null;
-      } finally {
-        internalLoading.value = false;
-        emit('loading-change', false);
-      }
-    };
+  internalLoading.value = true;
+  emit('loading-change', true);
 
-    const onPageChange = (event) => {
-      const newPage = Math.floor(event.first / event.rows) + 1;
-      loadData(newPage);
-    };
+  try {
+    const response = await csvService.getRows(
+      props.fileId,
+      page,
+      pageSize.value,
+      props.searchQuery
+    );
 
-    watch(() => props.searchQuery, () => {
-      currentPage.value = 1;
-      loadData(1);
-    }, { immediate: false });
-
-    watch(() => props.fileId, () => {
-      if (props.fileId) {
-        loadData(1);
-      }
-    }, { immediate: true });
-
-    onMounted(() => {
-      if (props.fileId) {
-        loadData(1);
-      }
-    });
-
-    return {
-      rows,
-      pagination,
-      internalLoading,
-      onPageChange
-    };
+    rows.value = response.rows;
+    pagination.value = response.pagination;
+    currentPage.value = page;
+  } catch (error) {
+    console.error('Error loading data:', error);
+    rows.value = [];
+    pagination.value = null;
+  } finally {
+    internalLoading.value = false;
+    emit('loading-change', false);
   }
 };
+
+const onPageChange = (event) => {
+  const newPage = Math.floor(event.first / event.rows) + 1;
+  loadData(newPage);
+};
+
+watch(() => props.searchQuery, () => {
+  currentPage.value = 1;
+  loadData(1);
+}, { immediate: false });
+
+watch(() => props.fileId, () => {
+  if (props.fileId) {
+    loadData(1);
+  }
+}, { immediate: true });
+
+onMounted(() => {
+  if (props.fileId) {
+    loadData(1);
+  }
+});
 </script>
 
 <style scoped>

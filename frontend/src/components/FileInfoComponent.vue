@@ -29,25 +29,18 @@
   </Card>
 </template>
 
-<script>
-export default {
-  name: 'FileInfoComponent',
-  props: {
-    file: {
-      type: Object,
-      required: true
-    }
-  },
-  emits: ['close'],
-  setup(props, { emit }) {
-    const handleClose = () => {
-      emit('close');
-    };
-
-    return {
-      handleClose
-    };
+<script setup>
+defineProps({
+  file: {
+    type: Object,
+    required: true
   }
+});
+
+const emit = defineEmits(['close']);
+
+const handleClose = () => {
+  emit('close');
 };
 </script>
 

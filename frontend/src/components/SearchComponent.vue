@@ -33,44 +33,35 @@
   </Card>
 </template>
 
-<script>
+<script setup>
 import { ref, watch } from 'vue';
 
-export default {
-  name: 'SearchComponent',
-  props: {
-    loading: {
-      type: Boolean,
-      default: false
-    }
-  },
-  emits: ['search', 'clear'],
-  setup(props, { emit }) {
-    const searchText = ref('');
+const props = defineProps({
+  loading: {
+    type: Boolean,
+    default: false
+  }
+});
 
-    const handleSearch = () => {
-      if (searchText.value.trim()) {
-        emit('search', searchText.value.trim());
-      }
-    };
+const emit = defineEmits(['search', 'clear']);
 
-    const handleClear = () => {
-      searchText.value = '';
-      emit('clear');
-    };
+const searchText = ref('');
 
-    watch(() => props.loading, (newVal) => {
-      if (!newVal && !searchText.value) {
-        emit('clear');
-      }
-    });
-
-    return {
-      searchText,
-      handleSearch,
-      handleClear
-    };
+const handleSearch = () => {
+  if (searchText.value.trim()) {
+    emit('search', searchText.value.trim());
   }
 };
+
+const handleClear = () => {
+  searchText.value = '';
+  emit('clear');
+};
+
+watch(() => props.loading, (newVal) => {
+  if (!newVal && !searchText.value) {
+    emit('clear');
+  }
+});
 </script>
 

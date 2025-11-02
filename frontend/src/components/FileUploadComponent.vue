@@ -57,92 +57,78 @@
   </Card>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { csvService } from '../services/api';
 
-export default {
-  name: 'FileUploadComponent',
-  emits: ['file-uploaded'],
-  setup(props, { emit }) {
-    const toast = useToast();
-    const selectedFile = ref(null);
-    const uploading = ref(false);
-    const uploadProgress = ref(0);
+const emit = defineEmits(['file-uploaded']);
 
-    const formatFileSize = (bytes) => {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    };
+const toast = useToast();
+const selectedFile = ref(null);
+const uploading = ref(false);
+const uploadProgress = ref(0);
 
-    const onFileSelect = (event) => {
-      if (event.files && event.files.length > 0) {
-        selectedFile.value = event.files[0];
-        uploadProgress.value = 0;
-      }
-    };
+const formatFileSize = (bytes) => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+};
 
-    const handleUpload = async () => {
-      if (!selectedFile.value) {
-        toast.add({
-          severity: 'warn',
-          summary: 'Ошибка',
-          detail: 'Пожалуйста, выберите файл',
-          life: 3000
-        });
-        return;
-      }
-
-      uploading.value = true;
-      uploadProgress.value = 0;
-
-      try {
-        const fileData = await csvService.uploadFile(selectedFile.value);
-        
-        emit('file-uploaded', {
-          id: fileData.fileId,
-          headers: fileData.headers,
-          totalRows: fileData.totalRows,
-          fileName: selectedFile.value.name
-        });
-
-        selectedFile.value = null;
-        uploadProgress.value = 100;
-      } catch (error) {
-        console.error('Upload error:', error);
-        toast.add({
-          severity: 'error',
-          summary: 'Ошибка загрузки',
-          detail: error.response?.data?.error || error.message || 'Не удалось загрузить файл',
-          life: 5000
-        });
-      } finally {
-        uploading.value = false;
-        setTimeout(() => {
-          uploadProgress.value = 0;
-        }, 1000);
-      }
-    };
-
-    const handleCancel = () => {
-      selectedFile.value = null;
-      uploadProgress.value = 0;
-    };
-
-    return {
-      selectedFile,
-      uploading,
-      uploadProgress,
-      formatFileSize,
-      onFileSelect,
-      handleUpload,
-      handleCancel
-    };
+const onFileSelect = (event) => {
+  if (event.files && event.files.length > 0) {
+    selectedFile.value = event.files[0];
+    uploadProgress.value = 0;
   }
+};
+
+const handleUpload = async () => {
+  if (!selectedFile.value) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Ошибка',
+      detail: 'Пожалуйста, выберите файл',
+      life: 3000
+    });
+    return;
+  }
+
+  uploading.value = true;
+  uploadProgress.value = 0;
+
+  try {
+    const fileData = await csvService.uploadFile(selectedFile.value);
+    
+    emit('file-uploaded', {
+      id: fileData.fileId,
+      headers: fileData.headers,
+      totalRows: fileData.totalRows,
+      fileName: selectedFile.value.name
+    });
+
+    selectedFile.value = null;
+    uploadProgress.value = 100;
+  } catch (error) {
+    console.error('Upload error:', error);
+    toast.add({
+      severity: 'error',
+      summary: 'Ошибка загрузки',
+      detail: error.response?.data?.error || error.message || 'Не удалось загрузить файл',
+      life: 5000
+    });
+  } finally {
+    uploading.value = false;
+    setTimeout(() => {
+      uploadProgress.value = 0;
+    }, 1000);
+  }
+};
+
+const handleCancel = () => {
+  selectedFile.value = null;
+  uploadProgress.value = 0;
 };
 </script>
 
