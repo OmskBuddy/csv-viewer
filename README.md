@@ -26,8 +26,6 @@ npm run build
 npm start
 ```
 
-Приложение будет доступно по адресу: http://localhost:5173 (frontend) и http://localhost:3000 (backend API)
-
 ## Возможности
 
 - Загрузка CSV файлов любого размера (до 10^6 строк)
