@@ -3,7 +3,6 @@
     <template #content>
       <div class="flex gap-2 items-center">
         <span class="p-input-icon-left flex-1">
-          <i class="pi pi-search" />
           <InputText
             v-model="searchText"
             placeholder="Введите текст для поиска..."
@@ -17,10 +16,9 @@
           icon="pi pi-search"
           @click="handleSearch"
           :loading="loading"
-          :disabled="loading || !searchText.trim()"
+          :disabled="loading"
         />
         <Button
-          v-if="searchText"
           label="Очистить"
           icon="pi pi-times"
           severity="secondary"

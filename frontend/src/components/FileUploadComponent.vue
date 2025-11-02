@@ -31,17 +31,16 @@
           </p>
           <div class="flex gap-2 justify-center">
             <Button
-              label="Загрузить"
-              icon="pi pi-upload"
-              @click="handleUpload"
-              :loading="uploading"
+              label="Отмена"
+              severity="secondary"
+              @click="handleCancel"
               :disabled="uploading"
             />
             <Button
-              label="Отмена"
-              severity="secondary"
-              outlined
-              @click="handleCancel"
+              label="Подтвердить"
+              severity="primary"
+              @click="handleUpload"
+              :loading="uploading"
               :disabled="uploading"
             />
           </div>
@@ -61,6 +60,7 @@
 import { ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { csvService } from '../services/api';
+import Button from 'primevue/button';
 
 const emit = defineEmits(['file-uploaded']);
 
@@ -131,4 +131,41 @@ const handleCancel = () => {
   uploadProgress.value = 0;
 };
 </script>
+
+<style scoped>
+:deep(.p-button) {
+  border: 1px solid;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+:deep(.p-button.p-button-primary) {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+:deep(.p-button.p-button-primary:hover:not(:disabled)) {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+:deep(.p-button.p-button-secondary) {
+  background-color: #6b7280;
+  border-color: #6b7280;
+  color: white;
+}
+
+:deep(.p-button.p-button-secondary:hover:not(:disabled)) {
+  background-color: #4b5563;
+  border-color: #4b5563;
+}
+
+:deep(.p-button:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+</style>
 

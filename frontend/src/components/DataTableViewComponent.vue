@@ -23,6 +23,7 @@
             class="p-datatable-sm"
             striped-rows
             show-gridlines
+            removable-sort
             responsive-layout="scroll"
           >
             <Column
@@ -126,18 +127,18 @@ const onPageChange = (event) => {
 
 watch(() => props.searchQuery, () => {
   currentPage.value = 1;
-  loadData(1);
+  loadData();
 }, { immediate: false });
 
 watch(() => props.fileId, () => {
   if (props.fileId) {
-    loadData(1);
+    loadData();
   }
 }, { immediate: true });
 
 onMounted(() => {
   if (props.fileId) {
-    loadData(1);
+    loadData();
   }
 });
 </script>
