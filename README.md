@@ -10,20 +10,21 @@
 
 ## Быстрый старт
 
-1. Установка зависимостей:
+**Одна команда для запуска (автоматически установит зависимости если нужно):**
 ```bash
-npm run install:all
+npm start
 ```
 
-2. Запуск в режиме разработки:
+**Или по отдельности:**
 ```bash
-npm run dev
+npm run install:all  # Установка зависимостей
+npm run dev          # Запуск в режиме разработки
 ```
 
-3. Запуск в production:
+**Запуск в production:**
 ```bash
 npm run build
-npm start
+cd backend && npm start
 ```
 
 ## Возможности
